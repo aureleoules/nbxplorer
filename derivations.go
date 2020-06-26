@@ -65,3 +65,69 @@ func (c *Client) GetCurrentBalance(derivationScheme string) (Balance, error) {
 	_, err := c.R().SetError(&r).SetResult(&balance).Get("/derivations/" + derivationScheme + "/balance")
 	return balance, err
 }
+
+// ScriptPubKeyInfos struct
+type ScriptPubKeyInfos struct {
+	TrackedSource      string  `json:"trackedSource"`
+	Feature            Feature `json:"feature"`
+	DerivationStrategy string  `json:"derivationStrategy`
+	KeyPath            string  `json:"keyPath"`
+	ScriptPubKey       string  `json:"scriptPubKey"`
+	Address            string  `json:"address"`
+}
+
+func (c *Client) GetScriptPubKeyInfos(derivationScheme string, script string) (ScriptPubKeyInfos, error) {
+	var infos ScriptPubKeyInfos
+	var r *ErrorResponse
+
+	_, err := c.R().SetResult(&infos).SetError(&r).Get("/derivations/" + derivationScheme + "/scripts/" + script)
+	if r != nil {
+		return infos, errors.New(r.Message)
+	}
+
+	return infos, err
+}
+
+// UTXO struct
+type UTXO struct {
+	Feature         string `json:"feature"`
+	Outpoint        string `json:"outpoint"`
+	Index           int    `json:"index"`
+	TransactionHash string `json:"transactionHash"`
+	ScriptPubKey    string `json:"scriptPubKey"`
+	Value           int    `json:"value"`
+	KeyPath         string `json:"keyPath"`
+	Timestamp       int    `json:"timestamp"`
+	Confirmations   int    `json:"confirmations"`
+}
+
+// UTXOInfos struct
+type UTXOInfos struct {
+	TrackedSource      string `json:"trackedSource"`
+	DerivationStrategy string `json:"derivationStrategy"`
+	CurrentHeight      int    `json:"currentHeight"`
+	Unconfirmed        struct {
+		UtxOs          []UTXO   `json:"utxOs"`
+		SpentOutpoints []string `json:"spentOutpoints"`
+		HasChanges     bool     `json:"hasChanges"`
+	} `json:"unconfirmed"`
+	Confirmed struct {
+		UtxOs          []UTXO   `json:"utxOs"`
+		SpentOutpoints []string `json:"spentOutpoints"`
+		HasChanges     bool     `json:"hasChanges"`
+	} `json:"confirmed"`
+	HasChanges bool `json:"hasChanges"`
+}
+
+// GetDerivationSchemeUTXOs of derivation scheme
+func (c *Client) GetDerivationSchemeUTXOs(derivationScheme string) (UTXOInfos, error) {
+	var infos UTXOInfos
+	var r *ErrorResponse
+
+	_, err := c.R().SetResult(&infos).SetError(&r).Get("/derivations/" + derivationScheme + "/utxos")
+	if r != nil {
+		return infos, errors.New(r.Message)
+	}
+
+	return infos, err
+}

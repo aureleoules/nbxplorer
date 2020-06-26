@@ -73,3 +73,16 @@ func (c *Client) NewUnusedAddress(derivationScheme string, feature Feature, skip
 
 	return address, err
 }
+
+// GetAddressUTXOs of derivation scheme
+func (c *Client) GetAddressUTXOs(address string) (UTXOInfos, error) {
+	var infos UTXOInfos
+	var r *ErrorResponse
+
+	_, err := c.R().SetResult(&infos).SetError(&r).Get("/addresses/" + address + "/utxos")
+	if r != nil {
+		return infos, errors.New(r.Message)
+	}
+
+	return infos, err
+}
