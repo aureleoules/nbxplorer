@@ -1,6 +1,9 @@
 package nbxplorer
 
-import "strconv"
+import (
+	"errors"
+	"strconv"
+)
 
 // Output struct
 type Output struct {
@@ -40,6 +43,27 @@ type Transaction struct {
 func (c *Client) GetTransaction(hash string, hex bool) (Transaction, error) {
 	var tx Transaction
 	var r ErrorResponse
-	_, err := c.R().SetResult(&tx).SetError(&r).SetQueryParam("includeTransaction", strconv.FormatBool(hex)).Get("/transactions/" + hash)
+	_, err := c.R().
+		SetResult(&tx).
+		SetError(&r).
+		SetQueryParam("includeTransaction", strconv.FormatBool(hex)).
+		Get("/transactions/" + hash)
+
 	return tx, err
+}
+
+// BroadcastTransaction
+func (c *Client) BroadcastTransaction(tx []byte, testOnly bool) error {
+	var r *ErrorResponse
+
+	_, err := c.R().
+		SetError(&r).
+		SetQueryParam("testMempoolAccept", strconv.FormatBool(testOnly)).
+		Post("/transactions")
+
+	if r != nil {
+		return errors.New(r.Message)
+	}
+
+	return err
 }
