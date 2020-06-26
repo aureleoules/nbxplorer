@@ -131,3 +131,20 @@ func (c *Client) GetDerivationSchemeUTXOs(derivationScheme string) (UTXOInfos, e
 
 	return infos, err
 }
+
+// ScanUTXOSet scans the UTXO Set for output belonging to your derivationScheme.
+// In order to not consume too much RAM, NBXplorer splits the addresses to scan in several batch and scan the whole UTXO set sequentially.
+// Three branches are scanned: 0/x, 1/x and x.
+// If a UTXO in one branch get found at a specific x, then all addresses inferior to
+// index x will be considered used and not proposed when fetching a new unused address.
+func (c *Client) ScanUTXOSet(derivationScheme string, batchSize int, gapLimit int, from int) error {
+	var infos UTXOInfos
+	var r *ErrorResponse
+
+	_, err := c.R().SetResult(&infos).SetError(&r).Get("/derivations/" + derivationScheme + "/utxos/scan")
+	if r != nil {
+		return errors.New(r.Message)
+	}
+
+	return err
+}

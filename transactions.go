@@ -67,3 +67,33 @@ func (c *Client) BroadcastTransaction(tx []byte, testOnly bool) error {
 
 	return err
 }
+
+// TransactionID struct
+type TransactionID struct {
+	ID      string  `json:"transactionId"`
+	BlockID *string `json:"blockId,omitempty"`
+}
+
+// RescanTransactions will index previous txs.
+// NBXplorer does not rescan the whole blockchain when tracking a new derivation scheme.
+// This means that if the derivation scheme already received UTXOs in the past,
+// NBXplorer will not be aware of it and might reuse addresses already generated in the past,
+// and will not show past transactions.
+// By using this route, you can ask NBXplorer to rescan specific transactions found in the blockchain.
+// This way, the transactions and the UTXOs present before tracking the derivation scheme will appear correctly.
+// Only the transactionId is specified. Your node must run --txindex=1 for this to work
+// Careful: A wrong blockId will corrupt the database.
+func (c *Client) RescanTransactions(txs []TransactionID) error {
+	var r *ErrorResponse
+
+	_, err := c.R().
+		SetError(&r).
+		SetBody(txs).
+		Post("/rescan")
+
+	if r != nil {
+		return errors.New(r.Message)
+	}
+
+	return err
+}
