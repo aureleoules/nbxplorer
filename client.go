@@ -33,14 +33,14 @@ type Client struct {
 	Chain     Chain
 	userAgent string
 
-	*resty.Client
+	httpClient *resty.Client
 }
 
 // NewClient constructor
 func NewClient(host string, chain Chain) *Client {
 	return &Client{
-		userAgent: "go-nbxplorer",
-		Chain:     chain,
-		Client:    resty.New().SetHostURL("http://" + host + "/v1/cryptos/" + string(chain)),
+		userAgent:  "go-nbxplorer",
+		Chain:      chain,
+		httpClient: resty.New().SetHostURL("http://" + host + "/v1/cryptos/" + string(chain)),
 	}
 }

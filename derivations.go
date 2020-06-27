@@ -9,7 +9,7 @@ import (
 func (c *Client) GetDerivationSchemeTransactions(derivationScheme string) ([]TransactionVerbose, error) {
 	var txs []TransactionVerbose
 	var r ErrorResponse
-	_, err := c.R().SetResult(&txs).SetError(&r).Get("/derivations/" + derivationScheme + "/transactions")
+	_, err := c.httpClient.R().SetResult(&txs).SetError(&r).Get("/derivations/" + derivationScheme + "/transactions")
 	return txs, err
 }
 
@@ -17,7 +17,7 @@ func (c *Client) GetDerivationSchemeTransactions(derivationScheme string) ([]Tra
 func (c *Client) GetDerivationSchemeTransaction(derivationScheme string, txid string) (TransactionVerbose, error) {
 	var tx TransactionVerbose
 	var r ErrorResponse
-	_, err := c.R().SetResult(&tx).SetError(&r).Get("/derivations/" + derivationScheme + "/transactions/" + txid)
+	_, err := c.httpClient.R().SetResult(&tx).SetError(&r).Get("/derivations/" + derivationScheme + "/transactions/" + txid)
 	return tx, err
 }
 
@@ -37,7 +37,7 @@ type TrackDerivationSchemeOptions struct {
 // TrackDerivationScheme
 func (c *Client) TrackDerivationScheme(derivationScheme string, options *TrackDerivationSchemeOptions) error {
 	var r ErrorResponse
-	req := c.R().SetError(&r)
+	req := c.httpClient.R().SetError(&r)
 
 	if options != nil {
 		req.SetBody(options)
@@ -65,7 +65,7 @@ func (c *Client) GetCurrentBalance(derivationScheme string) (Balance, error) {
 	var balance Balance
 	var r ErrorResponse
 
-	_, err := c.R().SetError(&r).SetResult(&balance).Get("/derivations/" + derivationScheme + "/balance")
+	_, err := c.httpClient.R().SetError(&r).SetResult(&balance).Get("/derivations/" + derivationScheme + "/balance")
 	return balance, err
 }
 
@@ -83,7 +83,7 @@ func (c *Client) GetScriptPubKeyInfos(derivationScheme string, script string) (S
 	var infos ScriptPubKeyInfos
 	var r *ErrorResponse
 
-	_, err := c.R().SetResult(&infos).SetError(&r).Get("/derivations/" + derivationScheme + "/scripts/" + script)
+	_, err := c.httpClient.R().SetResult(&infos).SetError(&r).Get("/derivations/" + derivationScheme + "/scripts/" + script)
 	if r != nil {
 		return infos, errors.New(r.Message)
 	}
@@ -127,7 +127,7 @@ func (c *Client) GetDerivationSchemeUTXOs(derivationScheme string) (UTXOInfos, e
 	var infos UTXOInfos
 	var r *ErrorResponse
 
-	_, err := c.R().SetResult(&infos).SetError(&r).Get("/derivations/" + derivationScheme + "/utxos")
+	_, err := c.httpClient.R().SetResult(&infos).SetError(&r).Get("/derivations/" + derivationScheme + "/utxos")
 	if r != nil {
 		return infos, errors.New(r.Message)
 	}
@@ -144,7 +144,7 @@ func (c *Client) ScanUTXOSet(derivationScheme string, batchSize int, gapLimit in
 	var infos UTXOInfos
 	var r *ErrorResponse
 
-	_, err := c.R().SetResult(&infos).SetError(&r).Get("/derivations/" + derivationScheme + "/utxos/scan")
+	_, err := c.httpClient.R().SetResult(&infos).SetError(&r).Get("/derivations/" + derivationScheme + "/utxos/scan")
 	if r != nil {
 		return errors.New(r.Message)
 	}
@@ -155,7 +155,7 @@ func (c *Client) ScanUTXOSet(derivationScheme string, batchSize int, gapLimit in
 func (c *Client) AttachDerivationSchemeMetadata(derivationScheme string, key string, metaData interface{}) error {
 	var r *ErrorResponse
 
-	_, err := c.R().SetError(&r).SetBody(metaData).Get("/derivations/" + derivationScheme + "/metadata/" + key)
+	_, err := c.httpClient.R().SetError(&r).SetBody(metaData).Get("/derivations/" + derivationScheme + "/metadata/" + key)
 	if r != nil {
 		return errors.New(r.Message)
 	}
@@ -166,7 +166,7 @@ func (c *Client) AttachDerivationSchemeMetadata(derivationScheme string, key str
 func (c *Client) DetachDerivationSchemeMetadata(derivationScheme string, key string) error {
 	var r *ErrorResponse
 
-	_, err := c.R().SetError(&r).Post("/derivations/" + derivationScheme + "/metadata/" + key)
+	_, err := c.httpClient.R().SetError(&r).Post("/derivations/" + derivationScheme + "/metadata/" + key)
 	if r != nil {
 		return errors.New(r.Message)
 	}
@@ -178,7 +178,7 @@ func (c *Client) GetDerivationSchemeMetadata(derivationScheme string, key string
 	var metadata interface{}
 	var r *ErrorResponse
 
-	_, err := c.R().SetResult(&metadata).SetError(&r).Get("/derivations/" + derivationScheme + "/metadata/" + key)
+	_, err := c.httpClient.R().SetResult(&metadata).SetError(&r).Get("/derivations/" + derivationScheme + "/metadata/" + key)
 	if r != nil {
 		return nil, errors.New(r.Message)
 	}
@@ -192,7 +192,7 @@ func (c *Client) PruneUTXOSet(derivationScheme string, daysToKeep int) (int, err
 	}
 	var r *ErrorResponse
 
-	_, err := c.R().SetResult(&resp).SetBody(map[string]string{
+	_, err := c.httpClient.R().SetResult(&resp).SetBody(map[string]string{
 		"daysToKeep": strconv.Itoa(daysToKeep),
 	}).SetError(&r).Post("/derivations/" + derivationScheme + "/prune")
 
@@ -231,7 +231,7 @@ func (c *Client) CreateWallet(options CreateWalletOptions) (CreateWalletResponse
 	var resp CreateWalletResponse
 	var r *ErrorResponse
 
-	_, err := c.R().SetResult(&resp).SetBody(options).SetError(&r).Post("/derivations")
+	_, err := c.httpClient.R().SetResult(&resp).SetBody(options).SetError(&r).Post("/derivations")
 
 	if r != nil {
 		return resp, errors.New(r.Message)

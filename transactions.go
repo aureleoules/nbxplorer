@@ -43,7 +43,7 @@ type Transaction struct {
 func (c *Client) GetTransaction(hash string, hex bool) (Transaction, error) {
 	var tx Transaction
 	var r ErrorResponse
-	_, err := c.R().
+	_, err := c.httpClient.R().
 		SetResult(&tx).
 		SetError(&r).
 		SetQueryParam("includeTransaction", strconv.FormatBool(hex)).
@@ -56,7 +56,7 @@ func (c *Client) GetTransaction(hash string, hex bool) (Transaction, error) {
 func (c *Client) BroadcastTransaction(tx []byte, testOnly bool) error {
 	var r *ErrorResponse
 
-	_, err := c.R().
+	_, err := c.httpClient.R().
 		SetError(&r).
 		SetQueryParam("testMempoolAccept", strconv.FormatBool(testOnly)).
 		Post("/transactions")
@@ -86,7 +86,7 @@ type TransactionID struct {
 func (c *Client) RescanTransactions(txs []TransactionID) error {
 	var r *ErrorResponse
 
-	_, err := c.R().
+	_, err := c.httpClient.R().
 		SetError(&r).
 		SetBody(txs).
 		Post("/rescan")

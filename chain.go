@@ -34,7 +34,7 @@ type ChainStatus struct {
 func (c *Client) GetStatus() (ChainStatus, error) {
 	var status ChainStatus
 	var r ErrorResponse
-	_, err := c.R().SetError(&r).SetResult(&status).Get("/status")
+	_, err := c.httpClient.R().SetError(&r).SetResult(&status).Get("/status")
 	return status, err
 }
 
@@ -48,6 +48,6 @@ type FeeRate struct {
 func (c *Client) GetFeeRate(blockCount int) (FeeRate, error) {
 	var feeRate FeeRate
 	var r ErrorResponse
-	_, err := c.R().SetError(&r).SetResult(&feeRate).Get("/fees/" + strconv.Itoa(blockCount))
+	_, err := c.httpClient.R().SetError(&r).SetResult(&feeRate).Get("/fees/" + strconv.Itoa(blockCount))
 	return feeRate, err
 }

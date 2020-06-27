@@ -23,7 +23,7 @@ type Event struct {
 func (c *Client) GetEventStream(lastEventID int, longPolling bool, limit *int) ([]Event, error) {
 	var r ErrorResponse
 	var events []Event
-	req := c.R().
+	req := c.httpClient.R().
 		SetResult(&events).
 		SetQueryParam("lastEventId", strconv.Itoa(lastEventID)).
 		SetQueryParam("longPolling", strconv.FormatBool(longPolling)).
@@ -49,7 +49,7 @@ func (c *Client) GetEventStream(lastEventID int, longPolling bool, limit *int) (
 func (c *Client) GetRecentEventStream(limit int) ([]Event, error) {
 	var r ErrorResponse
 	var events []Event
-	resp, err := c.R().
+	resp, err := c.httpClient.R().
 		SetResult(&events).
 		SetQueryParam("limit", strconv.Itoa(limit)).
 		SetError(&r).Get("/events/latest")

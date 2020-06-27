@@ -59,7 +59,7 @@ type CreatePSBTResponse struct {
 func (c *Client) CreatePSBT(derivationScheme string, psbt PSBT) (CreatePSBTResponse, error) {
 	var r ErrorResponse
 	var response CreatePSBTResponse
-	resp, err := c.R().
+	resp, err := c.httpClient.R().
 		SetBody(psbt).
 		SetResult(&response).
 		SetError(&r).
@@ -80,7 +80,7 @@ func (c *Client) CreatePSBT(derivationScheme string, psbt PSBT) (CreatePSBTRespo
 func (c *Client) UpdatePSBT(psbt string, derivationScheme *string, rebaseKeyPaths []KeyPath, alwaysIncludeNonWitnessUTXO bool) (string, error) {
 	var r ErrorResponse
 	var response map[string]interface{}
-	resp, err := c.R().
+	resp, err := c.httpClient.R().
 		SetBody(map[string]interface{}{
 			"pbst":                        psbt,
 			"derivationScheme":            derivationScheme,

@@ -8,7 +8,7 @@ import (
 // TrackAddress
 func (c *Client) TrackAddress(address string) error {
 	var r ErrorResponse
-	resp, err := c.R().SetError(&r).Post("/addresses/" + address)
+	resp, err := c.httpClient.R().SetError(&r).Post("/addresses/" + address)
 	if err != nil {
 		return err
 	}
@@ -25,7 +25,7 @@ func (c *Client) GetAddressTransactions(address string, hex bool) ([]Transaction
 	var txs []TransactionVerbose
 	var r ErrorResponse
 
-	_, err := c.R().SetResult(&txs).SetError(&r).SetQueryParam("includeTransaction", strconv.FormatBool(hex)).Get("/addresses/" + address + "/transactions")
+	_, err := c.httpClient.R().SetResult(&txs).SetError(&r).SetQueryParam("includeTransaction", strconv.FormatBool(hex)).Get("/addresses/" + address + "/transactions")
 	return txs, err
 }
 
@@ -34,7 +34,7 @@ func (c *Client) GetAddressTransaction(address string, txid string, hex bool) (T
 	var tx TransactionVerbose
 	var r ErrorResponse
 
-	_, err := c.R().SetResult(&tx).SetError(&r).SetQueryParam("includeTransaction", strconv.FormatBool(hex)).Get("/addresses/" + address + "/transactions/" + txid)
+	_, err := c.httpClient.R().SetResult(&tx).SetError(&r).SetQueryParam("includeTransaction", strconv.FormatBool(hex)).Get("/addresses/" + address + "/transactions/" + txid)
 	return tx, err
 }
 
@@ -62,7 +62,7 @@ func (c *Client) NewUnusedAddress(derivationScheme string, feature Feature, skip
 	var address UnusedAddress
 	var r *ErrorResponse
 
-	_, err := c.R().SetResult(&address).SetError(&r).Get("/derivations/" + derivationScheme + "/addresses/unused")
+	_, err := c.httpClient.R().SetResult(&address).SetError(&r).Get("/derivations/" + derivationScheme + "/addresses/unused")
 	if r != nil {
 		return address, errors.New(r.Message)
 	}
@@ -79,7 +79,7 @@ func (c *Client) GetAddressUTXOs(address string) (UTXOInfos, error) {
 	var infos UTXOInfos
 	var r *ErrorResponse
 
-	_, err := c.R().SetResult(&infos).SetError(&r).Get("/addresses/" + address + "/utxos")
+	_, err := c.httpClient.R().SetResult(&infos).SetError(&r).Get("/addresses/" + address + "/utxos")
 	if r != nil {
 		return infos, errors.New(r.Message)
 	}
