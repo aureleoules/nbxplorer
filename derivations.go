@@ -148,3 +148,37 @@ func (c *Client) ScanUTXOSet(derivationScheme string, batchSize int, gapLimit in
 
 	return err
 }
+
+func (c *Client) AttachDerivationSchemeMetadata(derivationScheme string, key string, metaData interface{}) error {
+	var r *ErrorResponse
+
+	_, err := c.R().SetError(&r).SetBody(metaData).Get("/derivations/" + derivationScheme + "/metadata/" + key)
+	if r != nil {
+		return errors.New(r.Message)
+	}
+
+	return err
+}
+
+func (c *Client) DetachDerivationSchemeMetadata(derivationScheme string, key string) error {
+	var r *ErrorResponse
+
+	_, err := c.R().SetError(&r).Post("/derivations/" + derivationScheme + "/metadata/" + key)
+	if r != nil {
+		return errors.New(r.Message)
+	}
+
+	return err
+}
+
+func (c *Client) GetDerivationSchemeMetadata(derivationScheme string, key string) (interface{}, error) {
+	var metadata interface{}
+	var r *ErrorResponse
+
+	_, err := c.R().SetResult(&metadata).SetError(&r).Get("/derivations/" + derivationScheme + "/metadata/" + key)
+	if r != nil {
+		return nil, errors.New(r.Message)
+	}
+
+	return metadata, err
+}

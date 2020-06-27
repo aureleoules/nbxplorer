@@ -75,3 +75,29 @@ func (c *Client) CreatePSBT(derivationScheme string, psbt PSBT) (CreatePSBTRespo
 
 	return response, nil
 }
+
+// UpdatePSBT
+func (c *Client) UpdatePSBT(psbt string, derivationScheme *string, rebaseKeyPaths []KeyPath, alwaysIncludeNonWitnessUTXO bool) (string, error) {
+	var r ErrorResponse
+	var response map[string]interface{}
+	resp, err := c.R().
+		SetBody(map[string]interface{}{
+			"pbst":                        psbt,
+			"derivationScheme":            derivationScheme,
+			"rebaseKeyPaths":              rebaseKeyPaths,
+			"alwaysIncludeNonWitnessUTXO": alwaysIncludeNonWitnessUTXO,
+		}).
+		SetResult(&response).
+		SetError(&r).
+		Post("/psbt/update")
+
+	if err != nil {
+		return "", err
+	}
+
+	if resp.StatusCode() != 200 {
+		return "", errors.New(r.Message)
+	}
+
+	return response["psbt"].(string), nil
+}
