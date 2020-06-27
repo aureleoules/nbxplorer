@@ -1,6 +1,9 @@
 package nbxplorer
 
-import "errors"
+import (
+	"errors"
+	"strconv"
+)
 
 // GetDerivationSchemeTransactions
 func (c *Client) GetDerivationSchemeTransactions(derivationScheme string) ([]TransactionVerbose, error) {
@@ -181,4 +184,58 @@ func (c *Client) GetDerivationSchemeMetadata(derivationScheme string, key string
 	}
 
 	return metadata, err
+}
+
+func (c *Client) PruneUTXOSet(derivationScheme string, daysToKeep int) (int, error) {
+	var resp struct {
+		TotalPruned int `json:"totalPruned"`
+	}
+	var r *ErrorResponse
+
+	_, err := c.R().SetResult(&resp).SetBody(map[string]string{
+		"daysToKeep": strconv.Itoa(daysToKeep),
+	}).SetError(&r).Post("/derivations/" + derivationScheme + "/prune")
+
+	if r != nil {
+		return 0, errors.New(r.Message)
+	}
+
+	return resp.TotalPruned, err
+}
+
+// CreateWalletOptions struct
+type CreateWalletOptions struct {
+	AccountNumber    int    `json:"accountNumber"`
+	WordList         string `json:"wordList"`
+	ExistingMnemonic string `json:"existingMnemonic"`
+	WordCount        int    `json:"wordCount"`
+	ScriptPubKeyType string `json:"scriptPubKeyType"`
+	Passphrase       string `json:"passphrase"`
+	ImportKeysToRPC  bool   `json:"importKeysToRPC"`
+	SavePrivateKeys  bool   `json:"savePrivateKeys"`
+}
+
+// CreateWalletResponse struct
+type CreateWalletResponse struct {
+	Mnemonic         string `json:"mnemonic"`
+	Passphrase       string `json:"passphrase"`
+	WordList         string `json:"wordList"`
+	WordCount        int    `json:"wordCount"`
+	MasterHDKey      string `json:"masterHDKey"`
+	AccountHDKey     string `json:"accountHDKey"`
+	AccountKeyPath   string `json:"accountKeyPath"`
+	DerivationScheme string `json:"derivationScheme"`
+}
+
+func (c *Client) CreateWallet(options CreateWalletOptions) (CreateWalletResponse, error) {
+	var resp CreateWalletResponse
+	var r *ErrorResponse
+
+	_, err := c.R().SetResult(&resp).SetBody(options).SetError(&r).Post("/derivations")
+
+	if r != nil {
+		return resp, errors.New(r.Message)
+	}
+
+	return resp, err
 }
