@@ -1,4 +1,4 @@
-module github.com/aureleoules/go-nbxplorer
+module github.com/aureleoules/nbxplorer
 
 go 1.13
 
