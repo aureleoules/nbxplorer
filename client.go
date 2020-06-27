@@ -6,10 +6,26 @@ import "github.com/go-resty/resty"
 type Chain string
 
 const (
-	// BTC : Bitcoin
-	BTC Chain = "btc"
-	// LBTC : Litecoin
-	LBTC Chain = "lbtc"
+	BTC   Chain = "btc"
+	LBTC  Chain = "lbtc"
+	AGM   Chain = "agm"
+	BTX   Chain = "btx"
+	LTC   Chain = "ltc"
+	Doge  Chain = "doge"
+	BCH   Chain = "bch"
+	GRS   Chain = "grs"
+	BTG   Chain = "btg"
+	Dash  Chain = "dash"
+	TRC   Chain = "trc"
+	Polis Chain = "polis"
+	Mona  Chain = "mona"
+	FTC   Chain = "ftc"
+	UFO   Chain = "ufo"
+	VIA   Chain = "via"
+	XMCC  Chain = "xmcc"
+	BGX   Chain = "bgx"
+	COLX  Chain = "colx"
+	QTUM  Chain = "qtum"
 )
 
 // Client struct
