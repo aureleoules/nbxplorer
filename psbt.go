@@ -14,10 +14,10 @@ type Destination struct {
 
 // FeePreference struct
 type FeePreference struct {
-	ExplicitFeeRate int `json:"explicitFeeRate"`
-	ExplicitFee     int `json:"explicitFee"`
-	BlockTarget     int `json:"blockTarget"`
-	FallbackFeeRate int `json:"fallbackFeeRate"`
+	ExplicitFeeRate float64 `json:"explicitFeeRate"`
+	ExplicitFee     float64 `json:"explicitFee"`
+	BlockTarget     int     `json:"blockTarget"`
+	FallbackFeeRate int     `json:"fallbackFeeRate"`
 }
 
 // KeyPath struct

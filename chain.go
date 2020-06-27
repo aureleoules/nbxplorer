@@ -11,8 +11,8 @@ type ChainStatus struct {
 		Headers              int     `json:"headers"`
 		VerificationProgress float64 `json:"verificationProgress"`
 		IsSync               bool    `json:"isSynched"`
-		IncrementalRelayFee  int     `json:"incrementalRelayFee"`
-		MinRelayTxFee        int     `json:"minRelayTxFee"`
+		IncrementalRelayFee  float64 `json:"incrementalRelayFee"`
+		MinRelayTxFee        float64 `json:"minRelayTxFee"`
 		Capabilities         struct {
 			CanScanTxOutSet            bool `json:"canSupportTxoutSet"`
 			CanSupportSegwit           bool `json:"canSupportSegwit"`
