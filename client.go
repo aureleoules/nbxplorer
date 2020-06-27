@@ -41,6 +41,6 @@ func NewClient(host string, chain Chain) *Client {
 	return &Client{
 		userAgent: "go-nbxplorer",
 		Chain:     chain,
-		Client:    resty.New().SetHostURL("http://" + host + "/v1/cryptos/" + string(chain)).EnableTrace(),
+		Client:    resty.New().SetHostURL("http://" + host + "/v1/cryptos/" + string(chain)),
 	}
 }
