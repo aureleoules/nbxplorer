@@ -8,3 +8,5 @@ require (
 	github.com/stretchr/testify v1.6.1
 	gopkg.in/resty.v1 v1.12.0
 )
+
+replace github.com/go-resty/resty => gopkg.in/resty.v1 v1.11.0
