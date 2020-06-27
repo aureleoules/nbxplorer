@@ -1,6 +1,6 @@
 package nbxplorer
 
-import "github.com/go-resty/resty"
+import "gopkg.in/resty.v1"
 
 // Chain enum
 type Chain string
