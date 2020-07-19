@@ -62,7 +62,14 @@ func (c *Client) NewUnusedAddress(derivationScheme string, feature Feature, skip
 	var address UnusedAddress
 	var r *ErrorResponse
 
-	_, err := c.httpClient.R().SetResult(&address).SetError(&r).Get("/derivations/" + derivationScheme + "/addresses/unused")
+	_, err := c.httpClient.R().
+		SetResult(&address).
+		SetError(&r).
+		SetQueryParam("feature", string(feature)).
+		SetQueryParam("skip", strconv.Itoa(skip)).
+		SetQueryParam("reserve", strconv.FormatBool(reserve)).
+		Get("/derivations/" + derivationScheme + "/addresses/unused")
+
 	if r != nil {
 		return address, errors.New(r.Message)
 	}
